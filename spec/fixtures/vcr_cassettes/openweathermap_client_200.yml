@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.openweathermap.org/data/2.5/weather?appid=0784c38f6c2541819a554b9811a2f90e&lat=43.570816&lon=-79.718903&units=metric
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.12.1
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      server:
+      - openresty
+      date:
+      - Thu, 28 Nov 2024 19:39:42 GMT
+      content-type:
+      - application/json; charset=utf-8
+      content-length:
+      - '526'
+      connection:
+      - keep-alive
+      x-cache-key:
+      - "/data/2.5/weather?lat=43.57&lon=-79.72&units=metric"
+      access-control-allow-origin:
+      - "*"
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-methods:
+      - GET, POST
+    body:
+      encoding: UTF-8
+      string: '{"coord":{"lon":-79.7189,"lat":43.5708},"weather":[{"id":803,"main":"Clouds","description":"broken
+        clouds","icon":"04d"}],"base":"stations","main":{"temp":4.74,"feels_like":-0.07,"temp_min":4.09,"temp_max":5.62,"pressure":1007,"humidity":59,"sea_level":1007,"grnd_level":986},"visibility":10000,"wind":{"speed":7.72,"deg":310,"gust":11.32},"clouds":{"all":75},"dt":1732822782,"sys":{"type":2,"id":2020569,"country":"CA","sunrise":1732796974,"sunset":1732830292},"timezone":-18000,"id":6174528,"name":"Vista
+        Heights","cod":200}'
+  recorded_at: Thu, 28 Nov 2024 19:39:42 GMT
+recorded_with: VCR 6.3.1

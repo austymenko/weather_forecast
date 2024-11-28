@@ -1,0 +1,93 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mapbox.com/search/geocode/v6/forward?access_token=pk.eyJ1IjoiYXVzdHltZW5rbyIsImEiOiJjbTQwbnc5eGIwaGRlMnFwdHMybmtpNzNyIn0.WaymFGT3Vc-nMqui8m7oKA&language=en&q=5524+credit&types=address
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.12.1
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      content-type:
+      - application/vnd.geo+json; charset=utf-8
+      transfer-encoding:
+      - chunked
+      connection:
+      - keep-alive
+      date:
+      - Thu, 28 Nov 2024 18:47:24 GMT
+      content-encoding:
+      - gzip
+      x-powered-by:
+      - Express
+      access-control-allow-origin:
+      - "*"
+      access-control-expose-headers:
+      - x-rate-limit-interval,x-rate-limit-limit,x-rate-limit-remaining,x-rate-limit-reset,ip-proximity
+      cache-control:
+      - max-age=432000,stale-while-revalidate=600,stale-if-error=86400
+      x-rate-limit-limit:
+      - '1000'
+      x-rate-limit-interval:
+      - '60'
+      x-rate-limit-reset:
+      - '1732819704'
+      last-modified:
+      - Tue, 26 Nov 2024 17:31:31 GMT
+      etag:
+      - '"b17f442b9dd99600c4b2773738a7089d"'
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - Miss from cloudfront
+      via:
+      - 1.1 7ca36b6bf02ca67a6dcfb5a418d25d5e.cloudfront.net (CloudFront)
+      x-amz-cf-pop:
+      - YTO50-P3
+      alt-svc:
+      - h3=":443"; ma=86400
+      x-amz-cf-id:
+      - Ywsc1eCfepxzmg_fCmd7EXadY0duTVFkXa7hAUn9oxdqlr_phu86WQ==
+    body:
+      encoding: UTF-8
+      string: '{"type":"FeatureCollection","features":[{"type":"Feature","id":"dXJuOm1ieGFkcjphMjM0NTEzMC03ZGJmLTRiYTgtYWQwNS1kMzEzYjBlNmMyZWY","geometry":{"type":"Point","coordinates":[-79.718903,43.570816]},"properties":{"mapbox_id":"dXJuOm1ieGFkcjphMjM0NTEzMC03ZGJmLTRiYTgtYWQwNS1kMzEzYjBlNmMyZWY","feature_type":"address","full_address":"5524
+        Creditrise Place, Mississauga, Ontario L5M 6E3, Canada","name":"5524 Creditrise
+        Place","name_preferred":"5524 Creditrise Place","coordinates":{"longitude":-79.718903,"latitude":43.570816,"accuracy":"rooftop","routable_points":[{"name":"default","latitude":43.571011,"longitude":-79.718684}]},"place_formatted":"Mississauga,
+        Ontario L5M 6E3, Canada","match_code":{"address_number":"matched","street":"unmatched","postcode":"unmatched","place":"unmatched","region":"unmatched","locality":"not_applicable","country":"inferred","confidence":"low"},"context":{"address":{"mapbox_id":"dXJuOm1ieGFkcjphMjM0NTEzMC03ZGJmLTRiYTgtYWQwNS1kMzEzYjBlNmMyZWY","address_number":"5524","street_name":"Creditrise
+        Place","name":"5524 Creditrise Place"},"street":{"mapbox_id":"dXJuOm1ieGFkci1zdHI6YTIzNDUxMzAtN2RiZi00YmE4LWFkMDUtZDMxM2IwZTZjMmVm","name":"Creditrise
+        Place"},"neighborhood":{"mapbox_id":"dXJuOm1ieHBsYzpQZXdu","name":"Central
+        Erin Mills","translations":{"en":{"language":"en","name":"Central Erin Mills"}}},"postcode":{"mapbox_id":"postcode.58507234342612","name":"L5M
+        6E3"},"locality":{"mapbox_id":"dXJuOm1ieHBsYzpCaVBxSnc","name":"Vista Heights","wikidata_id":"Q115178498","translations":{"en":{"language":"en","name":"Vista
+        Heights"}}},"place":{"mapbox_id":"dXJuOm1ieHBsYzpBdTFJSnc","name":"Mississauga","wikidata_id":"Q50816","translations":{"en":{"language":"en","name":"Mississauga"}}},"district":{"mapbox_id":"dXJuOm1ieHBsYzpFU1lu","name":"Peel
+        County","wikidata_id":"Q7160206","translations":{"en":{"language":"en","name":"Peel
+        County"}}},"region":{"mapbox_id":"dXJuOm1ieHBsYzpSQ2M","name":"Ontario","wikidata_id":"Q1904","region_code":"ON","region_code_full":"CA-ON","translations":{"en":{"language":"en","name":"Ontario"}}},"country":{"mapbox_id":"dXJuOm1ieHBsYzpJaWM","name":"Canada","wikidata_id":"Q16","country_code":"CA","country_code_alpha_3":"CAN","translations":{"en":{"language":"en","name":"Canada"}}}}}},{"type":"Feature","id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOTox","geometry":{"type":"Point","coordinates":[-79.702227,43.590398]},"properties":{"mapbox_id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOTox","feature_type":"address","full_address":"5524
+        Creditview Road, Mississauga, Ontario L5V 1R8, Canada","name":"5524 Creditview
+        Road","name_preferred":"5524 Creditview Road","coordinates":{"longitude":-79.702227,"latitude":43.590398,"accuracy":"interpolated","routable_points":[{"name":"default","latitude":43.590398,"longitude":-79.702227}]},"place_formatted":"Mississauga,
+        Ontario L5V 1R8, Canada","match_code":{"address_number":"plausible","street":"unmatched","postcode":"unmatched","place":"unmatched","region":"unmatched","locality":"not_applicable","country":"inferred","confidence":"low"},"context":{"address":{"mapbox_id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOTox","address_number":"5524","street_name":"Creditview
+        Road","name":"5524 Creditview Road"},"street":{"mapbox_id":"dXJuOm1ieGFkci1zdHItaXRwOmV5SnNZVzVuZFdGblpTSTZJbVZ1SWl3aWNTSTZJalUxTWpRZ1kzSmxaR2wwSWl3aWRIbHdaWE1pT2lKaFpHUnlaWE56SWl3aWFXNWpiSFZrWlY5dFlYUmphRjlrWlhSaGFXd2lPaUowY25WbElpd2liVzlrWlNJNkltWnZjbmRoY21RaUxDSjJOblI1Y0dWeklqb2lZV1JrY21WemN5Sjk6MQ","name":"Creditview
+        Road"},"neighborhood":{"mapbox_id":"dXJuOm1ieHBsYzpjTXdu","name":"East Credit","translations":{"en":{"language":"en","name":"East
+        Credit"}}},"postcode":{"mapbox_id":"postcode.7115497121674860","name":"L5V
+        1R8"},"place":{"mapbox_id":"dXJuOm1ieHBsYzpBdTFJSnc","name":"Mississauga","wikidata_id":"Q50816","translations":{"en":{"language":"en","name":"Mississauga"}}},"district":{"mapbox_id":"dXJuOm1ieHBsYzpFU1lu","name":"Peel
+        County","wikidata_id":"Q7160206","translations":{"en":{"language":"en","name":"Peel
+        County"}}},"region":{"mapbox_id":"dXJuOm1ieHBsYzpSQ2M","name":"Ontario","wikidata_id":"Q1904","region_code":"ON","region_code_full":"CA-ON","translations":{"en":{"language":"en","name":"Ontario"}}},"country":{"mapbox_id":"dXJuOm1ieHBsYzpJaWM","name":"Canada","wikidata_id":"Q16","country_code":"CA","country_code_alpha_3":"CAN","translations":{"en":{"language":"en","name":"Canada"}}}}}},{"type":"Feature","id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOToy","geometry":{"type":"Point","coordinates":[-93.407343,44.705797]},"properties":{"mapbox_id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOToy","feature_type":"address","full_address":"5524
+        Credit River Road Southeast, Prior Lake, Minnesota 55372, United States","name":"5524
+        Credit River Road Southeast","name_preferred":"5524 Credit River Road Southeast","coordinates":{"longitude":-93.407343,"latitude":44.705797,"accuracy":"interpolated","routable_points":[{"name":"default","latitude":44.705797,"longitude":-93.407343}]},"place_formatted":"Prior
+        Lake, Minnesota 55372, United States","match_code":{"address_number":"plausible","street":"unmatched","postcode":"unmatched","place":"unmatched","region":"unmatched","locality":"not_applicable","country":"inferred","confidence":"low"},"context":{"address":{"mapbox_id":"dXJuOm1ieGFkci1pdHA6ZXlKc1lXNW5kV0ZuWlNJNkltVnVJaXdpY1NJNklqVTFNalFnWTNKbFpHbDBJaXdpZEhsd1pYTWlPaUpoWkdSeVpYTnpJaXdpYVc1amJIVmtaVjl0WVhSamFGOWtaWFJoYVd3aU9pSjBjblZsSWl3aWJXOWtaU0k2SW1admNuZGhjbVFpTENKMk5uUjVjR1Z6SWpvaVlXUmtjbVZ6Y3lKOToy","address_number":"5524","street_name":"Credit
+        River Road Southeast","name":"5524 Credit River Road Southeast"},"street":{"mapbox_id":"dXJuOm1ieGFkci1zdHItaXRwOmV5SnNZVzVuZFdGblpTSTZJbVZ1SWl3aWNTSTZJalUxTWpRZ1kzSmxaR2wwSWl3aWRIbHdaWE1pT2lKaFpHUnlaWE56SWl3aWFXNWpiSFZrWlY5dFlYUmphRjlrWlhSaGFXd2lPaUowY25WbElpd2liVzlrWlNJNkltWnZjbmRoY21RaUxDSjJOblI1Y0dWeklqb2lZV1JrY21WemN5Sjk6Mg","name":"Credit
+        River Road Southeast"},"postcode":{"mapbox_id":"dXJuOm1ieHBsYzpDMFNPN0E","name":"55372"},"place":{"mapbox_id":"dXJuOm1ieHBsYzpFQUZvN0E","name":"Prior
+        Lake","wikidata_id":"Q993458","alternate":{"mapbox_id":"dXJuOm1ieHBsYzpFZE9vN0E","name":"Shakopee","translations":{"en":{"language":"en","name":"Shakopee"}}},"translations":{"en":{"language":"en","name":"Prior
+        Lake"}}},"district":{"mapbox_id":"dXJuOm1ieHBsYzpBVC9tN0E","name":"Scott County","wikidata_id":"Q491256","translations":{"en":{"language":"en","name":"Scott
+        County"}}},"region":{"mapbox_id":"dXJuOm1ieHBsYzpBNFRz","name":"Minnesota","wikidata_id":"Q1527","region_code":"MN","region_code_full":"US-MN","translations":{"en":{"language":"en","name":"Minnesota"}}},"country":{"mapbox_id":"dXJuOm1ieHBsYzpJdXc","name":"United
+        States","wikidata_id":"Q30","country_code":"US","country_code_alpha_3":"USA","translations":{"en":{"language":"en","name":"United
+        States"}}}}}}],"attribution":"NOTICE: © 2024 Mapbox and its suppliers. All
+        rights reserved. Use of this data is subject to the Mapbox Terms of Service
+        (https://www.mapbox.com/about/maps/). This response and the information it
+        contains may not be retained."}'
+  recorded_at: Thu, 28 Nov 2024 18:47:24 GMT
+recorded_with: VCR 6.3.1

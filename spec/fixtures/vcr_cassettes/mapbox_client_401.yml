@@ -1,0 +1,53 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mapbox.com/search/geocode/v6/forward?access_token=wrong+token&language=en&q=5524+creditrise&types=address
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v2.12.1
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+      connection:
+      - keep-alive
+      date:
+      - Thu, 28 Nov 2024 18:45:59 GMT
+      content-encoding:
+      - gzip
+      x-powered-by:
+      - Express
+      access-control-allow-origin:
+      - "*"
+      access-control-expose-headers:
+      - x-rate-limit-interval,x-rate-limit-limit,x-rate-limit-remaining,x-rate-limit-reset,ip-proximity
+      cache-control:
+      - max-age=432000,stale-while-revalidate=600,stale-if-error=86400
+      etag:
+      - W/"49-CaLOFCB6VXUQScsQyfNj7kIqzwI"
+      vary:
+      - Accept-Encoding
+      x-cache:
+      - Error from cloudfront
+      via:
+      - 1.1 38389615ab12215cb4d7256670a884ae.cloudfront.net (CloudFront)
+      x-amz-cf-pop:
+      - YTO50-P3
+      alt-svc:
+      - h3=":443"; ma=86400
+      x-amz-cf-id:
+      - 4rMNhNv3T8KoTxnM56w1B4vaSkdiUg8VIiw1QAfIORg8HfDe2MtQMA==
+    body:
+      encoding: UTF-8
+      string: '{"message":"Not Authorized - Invalid Token","error_code":"INVALID_TOKEN"}'
+  recorded_at: Thu, 28 Nov 2024 18:45:59 GMT
+recorded_with: VCR 6.3.1
