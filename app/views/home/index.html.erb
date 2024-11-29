@@ -1,13 +1,22 @@
-<form data-controller="address" data-turbo-frame="address-suggestions" action="/api/v1/suggestions" method="get">
-  <input
-    placeholder="Start typing your address..."
-    autocomplete="off"
-    id="address-search"
-    type="text"
-    name="query"
-  >
-</form>
+<div class="w-full">
+  <div class="flex flex-col relative">
+    <div id="address-errors" style="display: block; position: relative; z-index: 50;">
+      <!-- Error messages display area -->
+    </div>
 
-<turbo-frame id="address-suggestions">
-  <!-- Suggestions will be replaced here -->
-</turbo-frame>
+    <form data-controller="address" data-turbo-frame="address-suggestions" action="/api/v1/suggestions" method="get">
+      <input
+        placeholder="Start typing your address..."
+        autocomplete="off"
+        id="address-search"
+        type="text"
+        name="query"
+        class="tom-select"
+        />
+    </form>
+
+    <turbo-frame id="address-suggestions">
+      <!-- Dropdown content for address suggestions -->
+    </turbo-frame>
+  </div>
+</div>
