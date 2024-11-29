@@ -5,11 +5,31 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application.tailwind", "data-turbo-track": "reload" %>
+
     <%= javascript_importmap_tags %>
   </head>
+
+  <style>
+      .suggestions-dropdown {
+          width: 100%;
+          padding: 8px;
+          margin-top: 4px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          background-color: white;
+      }
+      .suggestions-dropdown option {
+          padding: 8px;
+      }
+      .no-results {
+          color: #666;
+          padding: 8px;
+          margin-top: 4px;
+      }
+  </style>
 
   <body>
     <main class="container mx-auto mt-28 px-5 flex">

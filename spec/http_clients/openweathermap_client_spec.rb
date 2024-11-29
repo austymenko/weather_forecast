@@ -3,87 +3,91 @@
 require 'rails_helper'
 
 describe OpenweathermapClient do
-  context 'current weather' do
-    it 'has 401 UnauthorizedError in response' do
-      allow_any_instance_of(described_class)
-        .to receive(:api_key).and_return('wrong app id')
+  let(:longitude) { -79.718903 }
+  let(:latitude) { 43.570816 }
+  let(:wrong_api_key) { 'wrong app id' }
 
-      outcome = nil
+  describe '.run' do
+    context 'when requesting current weather' do
+      context 'with invalid authentication' do
+        before do
+          allow_any_instance_of(described_class)
+            .to receive(:api_key).and_return(wrong_api_key)
+        end
 
-      VCR.use_cassette('openweathermap_client_401') do
-        outcome = OpenweathermapClient.run(
-          lon: -79.718903,
-          lat: -43.570816
-        )
+        let(:unauthorized_result) do
+          VCR.use_cassette('openweathermap_client_401') do
+            OpenweathermapClient.run(lon: longitude, lat: latitude)
+          end
+        end
+
+        it 'returns unauthorized error' do
+          expect(unauthorized_result.valid?).to be_falsy
+          expect(unauthorized_result.errors.messages)
+            .to eq(mapbox_client_error: ['the server responded with status 401'])
+        end
       end
 
-      expect(outcome.valid?).to be_falsy
-      expect(outcome.errors.messages)
-        .to eq(
-          { mapbox_client_error: ['the server responded with status 401'] }
-        )
+      context 'with valid authentication' do
+        let(:weather_result) do
+          VCR.use_cassette('openweathermap_client_200') do
+            OpenweathermapClient.run(lon: longitude, lat: latitude)
+          end
+        end
+
+        it 'returns current weather data' do
+          expect(weather_result.valid?).to be_truthy
+          expect(weather_result.result).to be_a(Hash)
+          expect(weather_result.result).to eq(expected_current_weather_hash_response)
+        end
+      end
     end
 
-    it 'has valid response with the current weather data' do
-      outcome = nil
+    context 'when requesting forecast' do
+      context 'with invalid authentication' do
+        before do
+          allow_any_instance_of(described_class)
+            .to receive(:api_key).and_return(wrong_api_key)
+        end
 
-      VCR.use_cassette('openweathermap_client_200') do
-        outcome = OpenweathermapClient.run(
-          lon: -79.718903,
-          lat: 43.570816
-        )
+        let(:unauthorized_result) do
+          VCR.use_cassette('openweathermap_client_forecast_401') do
+            OpenweathermapClient.run(lon: longitude, lat: latitude)
+          end
+        end
+
+        it 'returns unauthorized error' do
+          expect(unauthorized_result.valid?).to be_falsy
+          expect(unauthorized_result.errors.messages)
+            .to eq(mapbox_client_error: ['the server responded with status 401'])
+        end
       end
 
-      response_hash = outcome.result
+      context 'with valid authentication' do
+        let(:forecast_result) do
+          VCR.use_cassette('openweathermap_client_forecast_200') do
+            OpenweathermapClient.run(
+              lon: longitude,
+              lat: latitude,
+              current_weather: false
+            )
+          end
+        end
 
-      expect(outcome.valid?).to be_truthy
-      expect(response_hash.class).to eq(Hash)
-      expect(response_hash).to eq(expected_current_weather_hash_response)
-    end
-  end
+        let(:forecast_data) do
+          forecast_result.result['list'].map do |entry|
+            {
+              weather: entry['weather'],
+              dt_txt: entry['dt_txt']
+            }
+          end
+        end
 
-  context 'forecast' do
-    it 'has 401 UnauthorizedError in response' do
-      allow_any_instance_of(described_class)
-        .to receive(:api_key).and_return('wrong app id')
-
-      outcome = nil
-
-      VCR.use_cassette('openweathermap_client_forecast_401') do
-        outcome = OpenweathermapClient.run(
-          lon: -79.718903,
-          lat: -43.570816
-        )
+        it 'returns forecast data' do
+          expect(forecast_result.valid?).to be_truthy
+          expect(forecast_data).to eq(expected_forecast)
+        end
       end
-
-      expect(outcome.valid?).to be_falsy
-      expect(outcome.errors.messages)
-        .to eq(
-          { mapbox_client_error: ['the server responded with status 401'] }
-        )
-    end
-
-    it 'has valid response with the forecast data' do
-      outcome = nil
-
-      VCR.use_cassette('openweathermap_client_forecast_200') do
-        outcome = OpenweathermapClient.run(
-          lon: -79.718903,
-          lat: 43.570816,
-          current_weather: false
-        )
-      end
-
-      response_hash = outcome.result
-      forecast_data = response_hash['list'].map do |entry|
-        {
-          weather: entry['weather'],
-          dt_txt: entry['dt_txt']
-        }
-      end
-
-      expect(outcome.valid?).to be_truthy
-      expect(forecast_data).to eq(expected_forecast)
     end
   end
 

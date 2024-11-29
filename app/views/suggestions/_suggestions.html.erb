@@ -1,0 +1,12 @@
+<select class="suggestions-dropdown" data-action="change->address#select">
+  <option value="">Select an address...</option>
+  <% suggestions.each do |suggestion| %>
+    <option
+      value="<%= suggestion.to_json %>"
+      data-lat="<%= suggestion[:lat] %>"
+      data-lon="<%= suggestion[:lon] %>"
+    >
+      <%= suggestion[:display_text] %>
+    </option>
+  <% end %>
+</select>
