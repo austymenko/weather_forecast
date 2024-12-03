@@ -39,5 +39,6 @@ module WeatherForecast
     # config.eager_load_paths << Rails.root.join("extras")
     config.eager_load_paths << Rails.root.join('services')
     config.eager_load_paths << Rails.root.join('http_clients')
+    config.eager_load_paths << Rails.root.join('concerns')
   end
 end

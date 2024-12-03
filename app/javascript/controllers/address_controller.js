@@ -2,16 +2,19 @@ import { Controller } from "@hotwired/stimulus"
 import TomSelect from "tom-select"
 
 export default class extends Controller {
-    connect() {
-        const input = this.element.querySelector('#address-search');
+    static MIN_QUERY_LENGTH = 3;
+    static WEATHER_UPDATE_DELAY = 50; // milliseconds
 
-        if (!input) {
-            console.error("Input element not found");
-            return;
-        }
+    connect() {
+        this.initializeAddressSearch();
+    }
+
+    initializeAddressSearch() {
+        const input = this.element.querySelector('#address-search');
+        if (!input) return;
 
         try {
-            const tomSelect = new TomSelect(input, {
+            this.tomSelect = new TomSelect(input, {
                 valueField: 'value',
                 labelField: 'label',
                 searchField: ['label'],
@@ -19,129 +22,143 @@ export default class extends Controller {
                 hideSelected: true,
                 closeAfterSelect: true,
                 controlInput: '<input type="text">',
-                score: function(search) {
-                    return function() { return 1; }
-                },
-                load: (query, callback) => {
-                    if (!query.length || query.length < 3) {
-                        this.clearOptions();
-                        callback();
-                        return;
-                    }
-
-                    fetch(`/api/v1/suggestions?query=${encodeURIComponent(query)}`, {
-                        headers: {
-                            'Accept': 'text/vnd.turbo-stream.html'
-                        }
-                    })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const streams = doc.querySelectorAll('turbo-stream');
-
-                            streams.forEach(stream => {
-                                if (stream.getAttribute('target') === 'address-errors') {
-                                    const errorDiv = document.getElementById('address-errors');
-                                    if (errorDiv) {
-                                        const template = stream.querySelector('template');
-                                        if (template) {
-                                            errorDiv.className = 'mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md shadow-sm';
-                                            errorDiv.style.color = '#b91c1c';
-                                            errorDiv.innerHTML = template.innerHTML;
-
-                                            const errorMessage = errorDiv.querySelector('.error');
-                                            if (errorMessage) {
-                                                errorMessage.className = 'error text-red-700 font-medium';
-                                                errorMessage.style.color = '#b91c1c';
-                                            }
-
-                                            errorDiv.style.display = 'block';
-                                            errorDiv.style.position = 'relative';
-                                            errorDiv.style.zIndex = '50';
-                                            errorDiv.style.opacity = '1';
-                                        }
-                                    }
-                                }
-
-                                if (stream.getAttribute('target') === 'address-suggestions') {
-                                    const container = document.createElement('div');
-                                    container.innerHTML = stream.querySelector('template').innerHTML;
-
-                                    const options = Array.from(container.querySelectorAll('option'))
-                                        .filter(option => option.value !== '')
-                                        .map(option => {
-                                            const data = JSON.parse(option.value);
-                                            return {
-                                                value: option.value,
-                                                label: data.address,
-                                                data: data
-                                            };
-                                        });
-
-                                    this.clearOptions();
-                                    callback(options);
-                                }
-                            });
-
-                            if (!streams.length) {
-                                this.clearOptions();
-                                callback();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error fetching suggestions:', error);
-                            callback();
-                        });
-                },
+                score: () => () => 1,
+                load: this.handleAddressLoad.bind(this),
                 render: {
-                    option: function(item, escape) {
-                        return `<div>${escape(item.label)}</div>`;
-                    },
-                    item: function(item, escape) {
-                        return `<div>${escape(item.label)}</div>`;
-                    }
+                    option: (item, escape) => `<div>${escape(item.label)}</div>`,
+                    item: (item, escape) => `<div>${escape(item.label)}</div>`
                 },
-                onItemAdd: (value, item) => {
+                onItemAdd: (value) => {
                     const data = JSON.parse(value);
-                    this.handleSelect(data);
+                    this.handleAddressSelect(data);
                 }
             });
-
-            this.tomSelect = tomSelect;
+            this.tomSelect.wrapper.style.width = '400px';
         } catch (error) {
-            console.error("Error initializing TomSelect:", error);
+            console.error("Error fetching address suggestions: ", error);
         }
+    }
+
+    async handleAddressLoad(query, callback) {
+        // bail out early if query is too short
+        if (!query.length || query.length < this.constructor.MIN_QUERY_LENGTH) {
+            this.clearOptions();
+            callback();
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/v1/suggestions?query=${encodeURIComponent(query)}`, {
+                headers: { 'Accept': 'text/vnd.turbo-stream.html' }
+            });
+
+            // Let Turbo handle the stream
+            const responseText = await response.text();
+            // let turbo do its thing first
+            Turbo.renderStreamMessage(responseText);
+
+            // now handle the response for our dropdown
+            const doc = new DOMParser().parseFromString(responseText, 'text/html');
+            const suggestionsTemplate = doc.querySelector('turbo-stream[target="address-suggestions"] template');
+
+            if (suggestionsTemplate) {
+                this.handleSuggestions(suggestionsTemplate, callback);
+            } else {
+                this.clearOptions();
+                callback();
+            }
+        } catch {
+            callback();
+        }
+    }
+
+    async handleAddressSelect(data) {
+        try {
+            this.tomSelect.clearOptions();
+            this.tomSelect.close();
+            document.querySelectorAll('option').forEach(opt => opt.remove());
+
+            // make sure we have containers before doing anything
+            const currentWeatherFrame = document.getElementById('current-weather');
+            const forecastFrame = document.getElementById('forecast');
+
+            if (!currentWeatherFrame) {
+                console.error('Current weather frame not found');
+                return;
+            }
+
+            if (!forecastFrame) {
+                console.error('Forecast frame not found');
+                return;
+            }
+
+            // clear old data first
+            currentWeatherFrame.innerHTML = '';
+            forecastFrame.innerHTML = '';
+
+            const processWeatherStream = async (html) => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const streams = Array.from(doc.querySelectorAll('turbo-stream'));
+
+                for (const stream of streams) {
+                    const target = stream.getAttribute('target');
+                    const frame = document.getElementById(target);
+                    if (frame && stream.querySelector('template')) {
+                        frame.innerHTML = stream.querySelector('template').innerHTML;
+                    }
+                }
+            };
+
+            // grab and process both weather updates
+            await Promise.all([
+                this.fetchCurrentWeather(data.lat, data.lon, data.postcode, data.country)
+                    .then(processWeatherStream)
+                    .catch(error => console.error('Current weather error:', error)),
+
+                this.fetchForecast(data.lat, data.lon, data.postcode, data.country)
+                    .then(processWeatherStream)
+                    .catch(error => console.error('Forecast error:', error))
+            ]);
+
+        } catch (error) {
+            console.error('Error updating weather:', error);
+        }
+    }
+
+    fetchCurrentWeather(latitude, longitude, postcode, country) {
+        return fetch(`/api/v1/forecasts/current_weather?latitude=${latitude}&longitude=${longitude}&country=${country}&postcode=${postcode}`, {
+            headers: { 'Accept': 'text/vnd.turbo-stream.html' }
+        }).then(response => response.text()); // Remove the renderStreamMessage here
+    }
+
+    fetchForecast(latitude, longitude, postcode, country) {
+        return fetch(`/api/v1/forecasts/forecast?latitude=${latitude}&longitude=${longitude}&country=${country}&postcode=${postcode}`, {
+            headers: { 'Accept': 'text/vnd.turbo-stream.html' }
+        }).then(response => response.text()); // Remove the renderStreamMessage here
+    }
+
+    handleSuggestions(template, callback) {
+        // grab all non-empty options and format them for tom-select
+        const options = Array.from(template.content.querySelectorAll('option'))
+            .filter(option => option.value !== '')
+            .map(option => {
+                const data = JSON.parse(option.value);
+                return {
+                    value: option.value,
+                    label: data.address,
+                    data: data
+                };
+            });
+
+        // cleanup leftover options to prevent duplicates
+        template.content.querySelectorAll('option').forEach(opt => opt.remove());
+
+        this.clearOptions();
+        callback(options);
     }
 
     clearOptions() {
-        if (this.tomSelect) {
-            this.tomSelect.clearOptions();
-        }
-    }
-
-    handleSelect(data) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-        fetch('/api/v1/forecasts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': csrfToken,
-                'Accept': 'text/vnd.turbo-stream.html'
-            },
-            body: JSON.stringify({
-                address: data.address,
-                latitude: data.lat,
-                longitude: data.lon
-            })
-        })
-            .then(response => response.text())
-            .then(html => {
-                console.log('Forecast created successfully');
-            })
-            .catch(error => {
-                console.error('Error creating forecast:', error);
-            });
+        this.tomSelect?.clearOptions();
     }
 }

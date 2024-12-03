@@ -8,7 +8,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :suggestions, only: [:index]
-      post 'forecasts', to: 'forecasts#create'
+      get 'forecasts/current_weather', to: 'forecasts#current_weather'
+      get 'forecasts/forecast', to: 'forecasts#forecast'
     end
   end
 

@@ -1,0 +1,23 @@
+<span class="text-xl font-semibold">Current Weather</span>
+<span class="text-md text-gray-600 ml-2"><%= current_weather_data[:date] %></span>
+
+<%= render partial: "api/v1/forecasts/cache_age", locals: { cache_age: cache_age } %>
+
+<div id="current_weather" class="bg-gray-100 p-4 border-[1px] rounded-lg shadow-md mb-6" style="width: 150px;">
+  <div class="flex items-center">
+    <div>
+      <img title="<%= current_weather_data[:title].humanize %>"
+           alt="<%= current_weather_data[:title].humanize %>"
+           src="http://openweathermap.org/img/w/<%= current_weather_data[:icon] %>.png"
+           class="w-12 h-12"/>
+    </div>
+    <div>
+    <span class="flex items-center" style="padding-left: 5px;">
+      <%= current_weather_data[:temp] %>°C
+    </span>
+    </div>
+  </div>
+  <div class="mt-1 text-sm">Feels Like: <%= current_weather_data[:feels_like] %>°C</div>
+  <div class="mt-1 text-sm">Humidity: <%= current_weather_data[:humidity] %>%</div>
+  <div class="mt-1 text-sm">Wind Speed: <%= current_weather_data[:wind_speed] %> m/s</div>
+</div>

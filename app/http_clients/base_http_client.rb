@@ -1,20 +1,28 @@
 # frozen_string_literal: true
 
+# The BaseHttpClient class is an abstract base class that provides common functionality
+# for HTTP client classes in the application, such as error processing and Faraday
+# configuration.
 class BaseHttpClient < ActiveInteraction::Base
+  # Allows the response from the HTTP request to be accessed as an attribute.
   attr_accessor :response
 
+  # Adds an around callback to the `execute` method that handles any Faraday client
+  # errors and adds them to the `errors` attribute.
   def self.with_error_processing
     set_callback :execute, :around, lambda { |_interaction, block|
       begin
         block.call
       rescue *Faraday::Response::RaiseError::ClientErrorStatusesWithCustomExceptions.values => e
         errors.add(:mapbox_client_error, e.message)
-      rescue StandardError => _e
-        errors.add(:mapbox_client_error, 'server error')
+      rescue StandardError => e
+        errors.add(:mapbox_client_error, e.message)
       end
     }
   end
 
+  # Configures and returns a Faraday HTTP client instance.
+  # @return [Faraday::Connection] The configured Faraday HTTP client.
   def faraday
     @faraday ||= Faraday.new(url: url) do |config|
       config.request :json
@@ -31,5 +39,12 @@ class BaseHttpClient < ActiveInteraction::Base
       config.adapter :net_http
       config.options.timeout = 5 # 5 seconds timeout for the request
     end
+  end
+
+  # Returns the base URL for the HTTP client. Subclasses should override this method
+  # to provide the appropriate base URL.
+  # @return [String] The base URL for the HTTP client.
+  def url
+    raise NotImplementedError, "#{self.class} must implement #url"
   end
 end
