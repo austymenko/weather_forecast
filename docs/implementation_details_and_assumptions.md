@@ -57,8 +57,3 @@ The following areas are out of scope:
 - monitoring
 - observability
 - deploy
-
-Using zip codes in cache is ineffective as the grids in different coutrie will be unequal.
-For example, in UK ZIP codes cover very small area (as low as 20-30m) which will lead to big number
-of cache misses despite the fact It will consume more memory that in most other countries. Much more
-efficient would be using a geospatial zoning. In this example H3 algorithm is used.
