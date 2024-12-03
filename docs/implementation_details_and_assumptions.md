@@ -20,6 +20,10 @@ Display indicator if result is pulled from cache.
 - Provided meaningful comments/documentation within the code
 - UI is built on [Hotwire](https://hotwired.dev/), Stimulus, Turbo Streams which simplified FrontEnd development (faster), server-side rendering (reducing the need for client-side rendering and the associated complexity) and deployment in comparison of alternative usage of Reactjs or similar frontend frameworks or libraries
 - *Decomposition* of the Objects and Design Patterns
+  - Design Patterns
+    - Factory Pattern: The AddressProviders::Factory class and other Factory classes are used to create instances of different address provider implementations, following the Factory pattern.
+    - Strategy Pattern: The AddressProviders::Base class and its concrete implementations (e.g., AddressProviders::MapboxProvider, WeatherProviders::OpenweathermapProvider) follow the Strategy pattern, allowing the service to use different address lookup strategies.
+    - Presenter Pattern: Perform formatting of Openweather and Maxbox APIs data to be presented on UI.
   - Controllers -> Services -> Providers (AddressSuggestion/Openweather) APIs -> Redis Cache (Yes/No) -> Presenters -> Response to UI via Turbo Streams
   - Storing current_weather/forecast data in Redis
     - Currently, data is stored in redis in keys [COUNTRY:POSTAL_CODE](https://drive.google.com/file/d/10IlZk25CA-94d68NYCPrFNlDEV7bJQes/view) with TTL. [Uber H3](https://github.com/uber/h3) approach can be considered and should be benchmarked.
