@@ -43,7 +43,7 @@ Display indicator if result is pulled from cache.
       - Service depends on abstractions (base provider/presenter) not concrete implementations
       - Dependencies are injected through the provider parameter  
 - Scalability Considerations
-  Redis can reduce server and memory demands, making it a better fit for hosting services like Heroku. Redis supports clustering for high availability and scalability.
+  - Redis can reduce server and memory demands, making it a better fit for hosting services like Heroku. Redis supports clustering for high availability and scalability.
 
 # Assumptions
 
