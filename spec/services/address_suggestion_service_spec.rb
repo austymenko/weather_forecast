@@ -3,79 +3,115 @@
 require 'rails_helper'
 
 RSpec.describe AddressSuggestionService do
-  let(:example_address) { '123 Dundas St E, Mississauga, ON L5A 1V2, Canada' }
-  let(:params) { ActionController::Parameters.new(query: example_address) }
+  let(:query) { 'New York' }
+  let(:provider) { :mapbox }
+  let(:address_suggestions_params) { ActionController::Parameters.new({ 'query' => query }) }
+  let(:base_params) do
+    {
+      address_suggestions_params: address_suggestions_params,
+      provider: provider
+    }
+  end
+
+  let(:mock_provider) { instance_double('AddressProviders::Base') }
+  let(:mock_provider_outcome) { instance_double('ActiveInteraction::Outcome') }
+  let(:mock_presenter) { instance_double('AddressSuggestions::MapboxPresenter') }
+
+  let(:raw_locations) do
+    [
+      { 'place_name' => 'New York, NY, USA', 'coordinates' => [-74.006, 40.7128] },
+      { 'place_name' => 'New York Mills, MN, USA', 'coordinates' => [-95.3763, 46.5188] }
+    ]
+  end
+
+  let(:formatted_locations) do
+    [
+      { address: 'New York, NY, USA', coordinates: { lat: 40.7128, lon: -74.006 } },
+      { address: 'New York Mills, MN, USA', coordinates: { lat: 46.5188, lon: -95.3763 } }
+    ]
+  end
+
+  before do
+    allow(AddressProviders::Factory).to receive(:for).with(provider).and_return(mock_provider)
+    allow(AddressSuggestions::MapboxPresenter).to receive(:new).and_return(mock_presenter)
+  end
 
   describe '#execute' do
-    subject { described_class.run(address_suggestions_params: params) }
-
     context 'when query is blank' do
-      let(:example_address) { '' }
+      let(:query) { '' }
 
       it 'returns empty array' do
-        expect(subject.result).to eq([])
+        result = described_class.run!(base_params)
+        expect(result).to eq([])
+      end
+
+      it 'does not call the address provider' do
+        expect(mock_provider).not_to receive(:fetch_suggestions)
+        described_class.run!(base_params)
       end
     end
 
     context 'when query is present' do
-      let(:mapbox_result) { double('MapboxResult', result: mapbox_locations) }
-      let(:mapbox_locations) do
-        [
-          {
-            'place_name' => example_address,
-            'center' => [longitude, latitude]
-          }
-        ]
-      end
-      let(:longitude) { -79.6441 }
-      let(:latitude) { 43.5890 }
-      let(:formatted_results) do
-        [
-          {
-            address: example_address,
-            lon: longitude,
-            lat: latitude
-          }
-        ]
-      end
-
       before do
-        allow(MapboxClient).to receive(:run)
-          .with(query: example_address)
-          .and_return(mapbox_result)
-
-        allow(MapboxPresenter).to receive(:addresses_and_coordinates)
-          .with(mapbox_locations)
-          .and_return(formatted_results)
+        allow(mock_provider).to receive(:fetch_suggestions).and_return(mock_provider_outcome)
+        allow(mock_provider_outcome).to receive(:valid?).and_return(true)
+        allow(mock_provider_outcome).to receive(:result).and_return(raw_locations)
+        allow(mock_presenter).to receive(:format_suggestions).and_return(formatted_locations)
       end
 
-      it 'calls MapboxClient with query' do
-        expect(MapboxClient).to receive(:run).with(query: example_address)
-        subject
+      it 'fetches and processes locations' do
+        result = described_class.run!(base_params)
+        expect(result).to eq(formatted_locations)
       end
 
-      it 'formats results using MapboxPresenter' do
-        expect(MapboxPresenter).to receive(:addresses_and_coordinates).with(mapbox_locations)
-        subject
+      it 'calls provider with correct query' do
+        expect(mock_provider).to receive(:fetch_suggestions).with(query)
+        described_class.run!(base_params)
       end
 
-      it 'returns formatted locations' do
-        expect(subject.result).to eq(formatted_results)
+      it 'formats suggestions using presenter' do
+        expect(mock_presenter).to receive(:format_suggestions).with(raw_locations)
+        described_class.run!(base_params)
       end
     end
 
-    context 'when MapboxClient raises an error' do
-      let(:example_address) { '123 Dundas St E, Mississauga, ON L5A 1V2, Canada' }
-
-      before do
-        allow(MapboxClient).to receive(:run)
-          .and_raise(StandardError.new('API Error'))
+    context 'when provider fails' do
+      let(:error_message) { 'API error' }
+      let(:provider_errors) do
+        ActiveModel::Errors.new(AddressProviders::Base.new).tap do |errors|
+          errors.add(:service_error, error_message)
+        end
       end
 
-      it 'handles the error through with_error_processing' do
-        outcome = subject
+      before do
+        allow(mock_provider).to receive(:fetch_suggestions).and_return(mock_provider_outcome)
+        allow(mock_provider_outcome).to receive(:valid?).and_return(false)
+        allow(mock_provider_outcome).to receive(:errors).and_return(provider_errors)
+      end
+
+      it 'adds provider errors to service errors' do
+        outcome = described_class.run(base_params)
+        expect(outcome.errors.full_messages).to include("Service error #{error_message}")
+      end
+
+      it 'does not process locations' do
+        expect(mock_presenter).not_to receive(:format_suggestions)
+        described_class.run(base_params)
+      end
+    end
+
+    context 'when presenter fails' do
+      before do
+        allow(mock_provider).to receive(:fetch_suggestions).and_return(mock_provider_outcome)
+        allow(mock_provider_outcome).to receive(:valid?).and_return(true)
+        allow(mock_provider_outcome).to receive(:result).and_return(raw_locations)
+        allow(mock_presenter).to receive(:format_suggestions).and_raise(StandardError.new('Formatting error'))
+      end
+
+      it 'handles presenter errors' do
+        outcome = described_class.run(base_params)
         expect(outcome).not_to be_valid
-        expect(outcome.errors).to be_present
+        expect(outcome.errors.full_messages).to include('Service error Formatting error')
       end
     end
   end

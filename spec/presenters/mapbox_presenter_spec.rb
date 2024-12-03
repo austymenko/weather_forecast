@@ -14,16 +14,22 @@ describe MapboxPresenter do
     [
       {
         address: '5524 Creditrise Place, Mississauga, Ontario L5M 6E3, Canada',
+        postcode: 'L5M 6E3',
+        country: 'Canada',
         lat: 43.570816,
         lon: -79.718903
       },
       {
         address: '5524 Creditview Road, Mississauga, Ontario L5V 1R8, Canada',
+        postcode: 'L5V 1R8',
+        country: 'Canada',
         lat: 43.590398,
         lon: -79.702227
       },
       {
         address: '5524 Credit River Road Southeast, Prior Lake, Minnesota 55372, United States',
+        postcode: '55372',
+        country: 'United States',
         lat: 44.705797,
         lon: -93.407343
       }
