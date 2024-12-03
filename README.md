@@ -27,6 +27,8 @@ bin/rails assets:precompile
 
 ## Run project
 
+Provide environment variables MAPBOX_ACCESS_TOKEN and OPENWEATHERMAP_APP_ID. 
+
 ```bash
 bin/rails server
 ```
